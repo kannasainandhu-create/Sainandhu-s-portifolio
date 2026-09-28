@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentronics - Online Electronics Rental</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 22px;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 65px 7%;
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            color: #4b5563;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: auto;
+            display: flex;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            padding: 15px 24px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+        }
+
+        .section {
+            padding: 50px 7%;
+        }
+
+        .section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .categories,
+        .products,
+        .steps {
+            display: grid;
+            gap: 22px;
+        }
+
+        .categories {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+
+        .category,
+        .product,
+        .step {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        }
+
+        .category {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .category .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .products {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .product {
+            overflow: hidden;
+        }
+
+        .product-image {
+            height: 170px;
+            background: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 70px;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-info h3 {
+            margin-bottom: 8px;
+        }
+
+        .price {
+            color: #2563eb;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .rent-btn,
+        .confirm-btn,
+        .cancel-btn {
+            border: none;
+            padding: 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .rent-btn,
+        .confirm-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .rent-btn {
+            width: 100%;
+        }
+
+        .rent-btn:hover,
+        .confirm-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .steps {
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        }
+
+        .step {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .step-number {
+            font-size: 30px;
+            color: #2563eb;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* Booking modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .65);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 28px;
+            border-radius: 14px;
+        }
+
+        .modal-box h2 {
+            margin-bottom: 8px;
+        }
+
+        .selected-product {
+            background: #eff6ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 16px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .confirm-btn,
+        .cancel-btn {
+            flex: 1;
+        }
+
+        .cancel-btn {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        /* Success message */
+        .success {
+            display: none;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        .success h2 {
+            color: #15803d;
+            margin-bottom: 10px;
+        }
+
+        .success p {
+            line-height: 1.6;
+        }
+
+        .close-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f3f4f6;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            nav a {
+                margin: 0 6px;
+                font-size: 14px;
+            }
+
+            .hero h1 {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">⚡ Rentronics</div>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#products">Products</a>
+        <a href="#how">How It Works</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Rent Electronics Easily</h1>
+    <p>Rent laptops, cameras, gaming consoles and other electronics at affordable prices.</p>
+
+    <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Search electronics...">
+        <button type="button" id="searchButton">Search</button>
+    </div>
+
+    <p id="searchResult" style="margin-top:15px;"></p>
+</section>
+
+<section class="section">
+    <h2>Browse Categories</h2>
+
+    <div class="categories">
+        <div class="category"><div class="icon">💻</div><h3>Laptops</h3></div>
+        <div class="category"><div class="icon">📱</div><h3>Mobiles</h3></div>
+        <div class="category"><div class="icon">📷</div><h3>Cameras</h3></div>
+        <div class="category"><div class="icon">🎮</div><h3>Gaming</h3></div>
+        <div class="category"><div class="icon">📺</div><h3>TVs</h3></div>
+        <div class="category"><div class="icon">🔊</div><h3>Speakers</h3></div>
+    </div>
+</section>
+
+<section class="section" id="products">
+    <h2>Popular Electronics</h2>
+
+    <div class="products">
+
+        <div class="product">
+            <div class="product-image">💻</div>
+            <div class="product-info">
+                <h3>HP Laptop</h3>
+                <p>Intel i5 | 8GB RAM | 512GB SSD</p>
+                <div class="price">₹500 / day</div>
+                <button class="rent-btn" data-product="HP Laptop" data-price="500">
+                    Rent Now
+                </button>
+            </div>
+        </div>
+
+        <div class="product">
+            <div class="product-image">📷</div>
+            <div class="product-info">
+                <h3>Canon Camera</h3>
+                <p>24MP | DSLR | 18-55mm Lens</p>
+                <div class="price">₹800 / day</div>
+                <button class="rent-btn" data-product="Canon Camera" data-price="800">
+                    Rent Now
+                </button>
+            </div>
+        </div>
+
+        <div class="product">
+            <div class="product-image">🎮</div>
+            <div class="product-info">
+                <h3>PlayStation 5</h3>
+                <p>PS5 Console | 2 Controllers</p>
+                <div class="price">₹700 / day</div>
+                <button class="rent-btn" data-product="PlayStation 5" data-price="700">
+                    Rent Now
+                </button>
+            </div>
+        </div>
+
+        <div class="product">
+            <div class="product-image">🔊</div>
+            <div class="product-info">
+                <h3>JBL Speaker</h3>
+                <p>Portable | Bluetooth | Powerful Bass</p>
+                <div class="price">₹300 / day</div>
+                <button class="rent-btn" data-product="JBL Speaker" data-price="300">
+                    Rent Now
+                </button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="section" id="how">
+    <h2>How It Works</h2>
+
+    <div class="steps">
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>Choose Product</h3>
+            <p>Select the electronic device you want to rent.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>Select Dates</h3>
+            <p>Choose your rental start and return dates.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>Confirm Booking</h3>
+            <p>Enter your details and confirm the rental.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <h3>Get Product</h3>
+            <p>Receive the electronic device at your location.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <h3>⚡ Rentronics</h3>
+    <p>Easy and affordable electronics rental platform.</p>
+    <p>© 2026 Rentronics. All Rights Reserved.</p>
+</footer>
+
+<!-- Booking Window -->
+<div class="modal" id="bookingModal">
+    <div class="modal-box">
+
+        <div id="bookingFormSection">
+            <h2>Book Your Electronics</h2>
+            <p>Please enter your rental details.</p>
+
+            <div class="selected-product" id="selectedProduct">
+                Product
+            </div>
+
+            <form id="bookingForm">
+
+                <div class="form-group">
+                    <label for="customerName">Your Name</label>
+                    <input id="customerName" type="text" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="customerPhone">Phone Number</label>
+                    <input id="customerPhone" type="tel"
+                           pattern="[0-9]{10}"
+                           placeholder="10 digit number"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="startDate">Rental Start Date</label>
+                    <input id="startDate" type="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="endDate">Return Date</label>
+                    <input id="endDate" type="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod" required style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:7px;font-size:16px;">
+                        <option value="">Select payment method</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Card">Debit / Credit Card</option>
+                        <option value="Cash on Delivery">Cash on Delivery</option>
+                    </select>
+                </div>
+
+                <div id="paymentDetails" style="display:none;background:#f8fafc;padding:14px;border-radius:8px;margin-bottom:15px;">
+                    <div class="form-group" id="upiGroup" style="display:none;margin-bottom:0;">
+                        <label for="upiId">UPI ID</label>
+                        <input id="upiId" type="text" placeholder="example@upi">
+                    </div>
+
+                    <div id="cardGroup" style="display:none;">
+                        <div class="form-group">
+                            <label for="cardNumber">Card Number</label>
+                            <input id="cardNumber" type="text" inputmode="numeric" maxlength="19" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div style="display:flex;gap:10px;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="expiry">Expiry</label>
+                                <input id="expiry" type="text" maxlength="5" placeholder="MM/YY">
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="cvv">CVV</label>
+                                <input id="cvv" type="password" inputmode="numeric" maxlength="3" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn" id="cancelButton">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="confirm-btn">
+                        Pay & Confirm Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="success" id="successSection">
+            <div class="success-icon">✅</div>
+            <h2>Booking Successful!</h2>
+
+            <p id="bookingSummary"></p>
+
+            <div class="close-info">
+                Your booking window will close automatically.
+                If the browser does not allow automatic closing,
+                use the Close Window button below.
+            </div>
+
+            <button type="button"
+                    class="confirm-btn"
+                    id="closeWindowButton"
+                    style="margin-top:18px;width:100%;">
+                Close Window
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Get HTML elements
+    const bookingModal = document.getElementById("bookingModal");
+    const bookingForm = document.getElementById("bookingForm");
+    const bookingFormSection = document.getElementById("bookingFormSection");
+    const successSection = document.getElementById("successSection");
+
+    const selectedProduct = document.getElementById("selectedProduct");
+    const bookingSummary = document.getElementById("bookingSummary");
+
+    const startDate = document.getElementById("startDate");
+    const endDate = document.getElementById("endDate");
+
+    let selectedProductName = "";
+    let selectedProductPrice = 0;
+
+    const paymentMethod = document.getElementById("paymentMethod");
+    const paymentDetails = document.getElementById("paymentDetails");
+    const upiGroup = document.getElementById("upiGroup");
+    const cardGroup = document.getElementById("cardGroup");
+    const upiId = document.getElementById("upiId");
+    const cardNumber = document.getElementById("cardNumber");
+    const expiry = document.getElementById("expiry");
+    const cvv = document.getElementById("cvv");
+
+    // Set today's date as the minimum rental date
+    const today = new Date().toISOString().split("T")[0];
+    startDate.min = today;
+    endDate.min = today;
+
+    // Open booking window
+    document.querySelectorAll(".rent-btn").forEach(function(button) {
+
+        button.addEventListener("click", function() {
+
+            selectedProductName = button.dataset.product;
+            selectedProductPrice = Number(button.dataset.price);
+
+            selectedProduct.textContent =
+                selectedProductName + " - ₹" +
+                selectedProductPrice + " / day";
+
+            bookingFormSection.style.display = "block";
+            successSection.style.display = "none";
+
+            bookingForm.reset();
+            paymentDetails.style.display = "none";
+            upiGroup.style.display = "none";
+            cardGroup.style.display = "none";
+            upiId.required = false;
+            cardNumber.required = false;
+            expiry.required = false;
+            cvv.required = false;
+
+            startDate.min = today;
+            endDate.min = today;
+
+            bookingModal.style.display = "flex";
+        });
+    });
+
+    // Make return date minimum equal to start date
+    startDate.addEventListener("change", function() {
+        endDate.min = startDate.value;
+
+        if (endDate.value && endDate.value < startDate.value) {
+            endDate.value = startDate.value;
+        }
+    });
+
+    // Show payment fields based on selected payment method
+    paymentMethod.addEventListener("change", function() {
+        paymentDetails.style.display = paymentMethod.value ? "block" : "none";
+        upiGroup.style.display = paymentMethod.value === "UPI" ? "block" : "none";
+        cardGroup.style.display = paymentMethod.value === "Card" ? "block" : "none";
+
+        upiId.required = paymentMethod.value === "UPI";
+        cardNumber.required = paymentMethod.value === "Card";
+        expiry.required = paymentMethod.value === "Card";
+        cvv.required = paymentMethod.value === "Card";
+    });
+
+    // Basic payment validation for this demo
+    function validatePayment() {
+        const method = paymentMethod.value;
+
+        if (!method) {
+            alert("Please select a payment method.");
+            return false;
+        }
+
+        if (method === "UPI") {
+            const value = upiId.value.trim();
+            if (!/^[^\s@]+@[^\s@]+$/.test(value)) {
+                alert("Please enter a valid UPI ID, for example name@upi.");
+                return false;
+            }
+        }
+
+        if (method === "Card") {
+            const digits = cardNumber.value.replace(/\D/g, "");
+            if (digits.length !== 16) {
+                alert("Please enter a valid 16-digit card number.");
+                return false;
+            }
+            if (!/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(expiry.value.trim())) {
+                alert("Enter card expiry in MM/YY format.");
+                return false;
+            }
+            if (!/^[0-9]{3}$/.test(cvv.value.trim())) {
+                alert("Please enter a valid 3-digit CVV.");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Cancel booking
+    document.getElementById("cancelButton").addEventListener("click", function() {
+        bookingModal.style.display = "none";
+        bookingForm.reset();
+    });
+
+    // Confirm booking
+    bookingForm.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const name = document.getElementById("customerName").value.trim();
+        const phone = document.getElementById("customerPhone").value.trim();
+        const from = startDate.value;
+        const to = endDate.value;
+
+        if (!name || !phone || !from || !to) {
+            alert("Please fill all booking details.");
+            return;
+        }
+
+        if (to < from) {
+            alert("Return date cannot be before the rental start date.");
+            return;
+        }
+
+        if (!validatePayment()) {
+            return;
+        }
+
+        // Calculate rental days
+        const fromDate = new Date(from + "T00:00:00");
+        const toDate = new Date(to + "T00:00:00");
+
+        const millisecondsPerDay = 1000 * 60 * 60 * 24;
+        const days = Math.max(
+            1,
+            Math.round((toDate - fromDate) / millisecondsPerDay)
+        );
+
+        const totalAmount = days * selectedProductPrice;
+
+        // Show successful booking
+        bookingSummary.innerHTML =
+            "<strong>" + name + "</strong>, your booking for <strong>" +
+            selectedProductName + "</strong> is confirmed.<br><br>" +
+            "Rental period: " + days + " day(s)<br>" +
+            "Payment method: " + paymentMethod.value + "<br>" +
+            "Payment status: <strong style=\"color:#15803d;\">Payment Verified (Demo)</strong><br>" +
+            "Total amount: <strong>₹" + totalAmount + "</strong>";
+
+        bookingFormSection.style.display = "none";
+        successSection.style.display = "block";
+
+        // Try to close automatically after 3 seconds
+        setTimeout(function() {
+            try {
+                window.close();
+            } catch (error) {
+                console.log("Browser blocked automatic window closing.");
+            }
+        }, 3000);
+    });
+
+    // Manual close button
+    document.getElementById("closeWindowButton").addEventListener("click", function() {
+        window.close();
+
+        // If browser blocks close(), keep the success page visible.
+        setTimeout(function() {
+            alert(
+                "The browser blocked automatic window closing. " +
+                "Please close this tab/window using your browser's close button."
+            );
+        }, 300);
+    });
+
+    // Search
+    document.getElementById("searchButton").addEventListener("click", function() {
+
+        const query = document.getElementById("searchInput").value
+            .trim()
+            .toLowerCase();
+
+        const products = document.querySelectorAll(".product");
+        let found = false;
+
+        products.forEach(function(product) {
+
+            const productName =
+                product.querySelector("h3").textContent.toLowerCase();
+
+            if (!query || productName.includes(query)) {
+                product.style.display = "block";
+                found = true;
+            } else {
+                product.style.display = "none";
+            }
+        });
+
+        const result = document.getElementById("searchResult");
+
+        if (query && !found) {
+            result.textContent = "No matching electronics found.";
+        } else {
+            result.textContent = "";
+            document.getElementById("products").scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
